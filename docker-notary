@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+docker_cli_plugin_metadata() {
+	if [ -z "$DOCKER_NOTARY_VERSION" ]; then
+		export DOCKER_COMPOSE_VERSION="2.0"
+	fi
+
+	local vendor="Sajay Antony"
+	local url="https://github.com/notaryproject/nv2"
+	local description="Notary V2 Signature extension"
+	cat <<-EOF
+	{"SchemaVersion":"0.1.0","Vendor":"${vendor}","Version":"${DOCKER_NOTARY_VERSION}","ShortDescription":"${description}","URL":"${url}"}
+EOF
+}
+
+function sign() {
+	# invoke the nv2 CLI here
+	echo "nv2 sign" $@	
+}
+
+case "$1" in
+	docker-cli-plugin-metadata)
+		docker_cli_plugin_metadata
+		;;
+	*)
+		shift 1
+		sign $@
+		;;
+esac
