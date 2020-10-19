@@ -12,5 +12,9 @@ var pushCommand = &cli.Command{
 }
 
 func pushImage(ctx *cli.Context) error {
+	if err := passThroughIfNotaryDisabled(ctx); err != nil {
+		return err
+	}
+
 	panic("not implemented")
 }

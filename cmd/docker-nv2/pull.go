@@ -12,5 +12,9 @@ var pullCommand = &cli.Command{
 }
 
 func pullImage(ctx *cli.Context) error {
+	if err := passThroughIfNotaryDisabled(ctx); err != nil {
+		return err
+	}
+
 	panic("not implemented")
 }
