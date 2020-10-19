@@ -7,12 +7,15 @@ import (
 
 // File reflects the config file
 type File struct {
-	Enabled bool `json:"enabled"`
+	Enabled           bool     `json:"enabled"`
+	VerificationCerts []string `json:"verificationCerts"`
 }
 
 // New creates a new config file
 func New() *File {
-	return &File{}
+	return &File{
+		VerificationCerts: []string{},
+	}
 }
 
 // Save stores the config to file

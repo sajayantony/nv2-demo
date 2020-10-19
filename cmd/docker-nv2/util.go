@@ -4,7 +4,9 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/notaryproject/notary/v2"
 	"github.com/sajayantony/nv2-demo/pkg/config"
+	"github.com/sajayantony/nv2-demo/pkg/crypto"
 	"github.com/urfave/cli/v2"
 )
 
@@ -30,4 +32,12 @@ func passThroughIfNotaryDisabled(ctx *cli.Context) error {
 	}
 	os.Exit(0)
 	panic("process should be terminated")
+}
+
+func getVerificationService() (notary.SigningService, error) {
+	cfg, err := config.Load()
+	if err != nil {
+		return nil, err
+	}
+	return crypto.GetSigningService("", cfg.VerificationCerts...)
 }
