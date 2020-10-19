@@ -20,7 +20,11 @@ func passThroughIfNotaryDisabled(ctx *cli.Context) error {
 	}
 
 	args := append([]string{ctx.Command.Name}, ctx.Args().Slice()...)
-	cmd := exec.Command("docker", args...)
+	return runCommand("docker", args...)
+}
+
+func runCommand(command string, args ...string) error {
+	cmd := exec.Command(command, args...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

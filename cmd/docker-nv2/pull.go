@@ -25,55 +25,63 @@ func pullImage(ctx *cli.Context) error {
 		return err
 	}
 
-	ref := ctx.Args().First()
-	named, err := reference.ParseNamed(ref)
+	ref, err := verifyRemoteImage(ctx.Context, ctx.Args().First())
 	if err != nil {
 		return err
+	}
+
+	return runCommand("docker", "pull", ref)
+}
+
+func verifyRemoteImage(ctx context.Context, ref string) (string, error) {
+	named, err := reference.ParseNamed(ref)
+	if err != nil {
+		return "", err
 	}
 	hostname, repository := reference.SplitHostname(named)
 	manifestRef := docker.GetManifestReference(ref)
 
 	service, err := getVerificationService()
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	manifestDesc, err := docker.GetManifestOCIDescriptor(
-		ctx.Context,
+		ctx,
 		hostname,
 		repository,
 		manifestRef,
 	)
 	if err != nil {
-		return err
+		return "", err
 	}
 	fmt.Println(manifestRef, "digest:", manifestDesc.Digest, "size:", manifestDesc.Size)
 
 	fmt.Println("Looking up for signatures")
-	client, err := docker.GetSignatureRepository(ctx.Context, ref)
+	client, err := docker.GetSignatureRepository(ctx, ref)
 	if err != nil {
-		return err
+		return "", err
 	}
-	sigDigests, err := client.Lookup(ctx.Context, manifestDesc.Digest)
+	sigDigests, err := client.Lookup(ctx, manifestDesc.Digest)
 	if err != nil {
-		return err
+		return "", err
 	}
 	switch n := len(sigDigests); n {
 	case 0:
-		return errors.New("no signature found")
+		return "", errors.New("no signature found")
 	default:
 		fmt.Println("Found", n, "signatures")
 	}
 
 	sigDigest, originRefs, err := verifySignatures(
-		ctx.Context,
+		ctx,
 		service,
 		client,
 		sigDigests,
 		manifestDesc,
 	)
 	if err != nil {
-		return fmt.Errorf("none of the signatures are valid: %v", err)
+		return "", fmt.Errorf("none of the signatures are valid: %v", err)
 	}
 	fmt.Println("Found valid signature:", sigDigest)
 	if len(originRefs) != 0 {
@@ -83,7 +91,7 @@ func pullImage(ctx *cli.Context) error {
 		}
 	}
 
-	return nil
+	return fmt.Sprintf("%s@%s", named, manifestDesc.Digest), nil
 }
 
 func verifySignatures(
