@@ -23,6 +23,11 @@ type File struct {
 	Enabled bool `json:"enabled"`
 }
 
+// New creates a new config file
+func New() *File {
+	return &File{}
+}
+
 // Save stores the config to file
 func (f *File) Save() error {
 	file, err := os.Create(FilePath)
