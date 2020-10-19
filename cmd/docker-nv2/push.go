@@ -1,6 +1,21 @@
 package main
 
 import (
+	"bufio"
+	"errors"
+	"fmt"
+	"io"
+	"io/ioutil"
+	"os"
+	"os/exec"
+	"strconv"
+	"strings"
+
+	"github.com/docker/distribution/manifest/schema2"
+	"github.com/opencontainers/go-digest"
+	oci "github.com/opencontainers/image-spec/specs-go/v1"
+	"github.com/sajayantony/nv2-demo/pkg/config"
+	"github.com/sajayantony/nv2-demo/pkg/docker"
 	"github.com/urfave/cli/v2"
 )
 
@@ -16,5 +31,79 @@ func pushImage(ctx *cli.Context) error {
 		return err
 	}
 
-	panic("not implemented")
+	desc, err := pushImageAndGetOCIDescriptor(ctx)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("Pushing signature")
+	sigPath := config.SignaturePath(desc.Digest)
+	sig, err := ioutil.ReadFile(sigPath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return errors.New("signature not found")
+		}
+		return err
+	}
+
+	client, err := docker.GetSignatureRepository(ctx.Context, ctx.Args().First())
+	if err != nil {
+		return err
+	}
+	sigDesc, err := client.Put(ctx.Context, sig)
+	if err != nil {
+		return err
+	}
+	fmt.Println("signature:", "digest:", sigDesc.Digest, "size:", sigDesc.Size)
+
+	if err := client.Link(ctx.Context, desc, sigDesc); err != nil {
+		return err
+	}
+	fmt.Println("Linked signature with manifest")
+
+	return nil
+}
+
+func pushImageAndGetOCIDescriptor(ctx *cli.Context) (oci.Descriptor, error) {
+	args := append([]string{ctx.Command.Name}, ctx.Args().Slice()...)
+	cmd := exec.Command("docker", args...)
+	cmd.Stdin = os.Stdin
+	cmd.Stderr = os.Stderr
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		return oci.Descriptor{}, err
+	}
+	scanner := bufio.NewScanner(io.TeeReader(stdout, os.Stdout))
+	if err := cmd.Start(); err != nil {
+		return oci.Descriptor{}, err
+	}
+	var lastLine string
+	for scanner.Scan() {
+		lastLine = scanner.Text()
+	}
+	if err := scanner.Err(); err != nil {
+		return oci.Descriptor{}, err
+	}
+	if err := cmd.Wait(); err != nil {
+		return oci.Descriptor{}, err
+	}
+
+	parts := strings.Split(lastLine, " ")
+	if len(parts) != 5 {
+		return oci.Descriptor{}, fmt.Errorf("invalid docker pull result: %s", lastLine)
+	}
+	digest, err := digest.Parse(parts[2])
+	if err != nil {
+		return oci.Descriptor{}, fmt.Errorf("invalid digest: %s", lastLine)
+	}
+	size, err := strconv.ParseInt(parts[4], 10, 64)
+	if err != nil {
+		return oci.Descriptor{}, fmt.Errorf("invalid size: %s", lastLine)
+	}
+
+	return oci.Descriptor{
+		MediaType: schema2.MediaTypeManifest,
+		Digest:    digest,
+		Size:      size,
+	}, nil
 }
