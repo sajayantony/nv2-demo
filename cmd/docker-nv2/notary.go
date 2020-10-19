@@ -28,13 +28,13 @@ func setNotary(ctx *cli.Context) error {
 		return cli.ShowCommandHelp(ctx, ctx.Command.Name)
 	}
 
-	conf, err := config.Load()
+	cfg, err := config.Load()
 	if err != nil {
 		if !os.IsNotExist(err) {
 			return err
 		}
-		conf = config.New()
+		cfg = config.New()
 	}
-	conf.Enabled = ctx.Bool(notaryEnabledFlag.Name)
-	return conf.Save()
+	cfg.Enabled = ctx.Bool(notaryEnabledFlag.Name)
+	return cfg.Save()
 }
