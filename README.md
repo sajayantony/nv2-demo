@@ -24,7 +24,7 @@ function docker { cmd /c docker nv2 $args }
 On the producer machine:
 ```bash
 docker notary --enabled
-docker build -t $image
+docker build -t $image .
 docker notary sign --key identity.pem --cert identity.crt $image
 docker push $image
 ```
