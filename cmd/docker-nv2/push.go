@@ -65,7 +65,7 @@ func pushImage(ctx *cli.Context) error {
 }
 
 func pushImageAndGetOCIDescriptor(ctx *cli.Context) (oci.Descriptor, error) {
-	args := append([]string{ctx.Command.Name}, ctx.Args().Slice()...)
+	args := append([]string{"push"}, ctx.Args().Slice()...)
 	cmd := exec.Command("docker", args...)
 	cmd.Stdin = os.Stdin
 	cmd.Stderr = os.Stderr
