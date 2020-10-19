@@ -1,7 +1,12 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/sajayantony/nv2-demo/pkg/config"
+	"github.com/sajayantony/nv2-demo/pkg/crypto"
+	"github.com/sajayantony/nv2-demo/pkg/docker"
+	"github.com/sajayantony/nv2-demo/pkg/util"
 	"github.com/urfave/cli/v2"
 )
 
@@ -10,14 +15,14 @@ var notarySignCommand = &cli.Command{
 	Usage:     "Sign a docker image",
 	ArgsUsage: "[<reference>]",
 	Flags: []cli.Flag{
-		&cli.StringFlag{
+		&cli.PathFlag{
 			Name:      "key",
 			Aliases:   []string{"k"},
 			Usage:     "signing key file",
 			TakesFile: true,
 			Required:  true,
 		},
-		&cli.StringFlag{
+		&cli.PathFlag{
 			Name:      "cert",
 			Aliases:   []string{"c"},
 			Usage:     "signing cert",
@@ -32,5 +37,31 @@ func notarySign(ctx *cli.Context) error {
 		return err
 	}
 
-	panic("not implemented")
+	service, err := crypto.GetSigningService(
+		ctx.Path("key"),
+		ctx.Path("cert"),
+	)
+	if err != nil {
+		return err
+	}
+
+	reference := ctx.Args().First()
+	fmt.Println("Generating Docker mainfest:", reference)
+	desc, err := docker.GenerateManifestOCIDescriptor(reference)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("Signing", desc.Digest)
+	sig, err := service.Sign(ctx.Context, desc, reference)
+	if err != nil {
+		return err
+	}
+	sigPath := config.SignaturePath(desc.Digest)
+	if err := util.WriteFile(sigPath, sig); err != nil {
+		return err
+	}
+	fmt.Println("Signature saved to", sigPath)
+
+	return nil
 }

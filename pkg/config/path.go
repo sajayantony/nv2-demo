@@ -4,6 +4,7 @@ import (
 	"path/filepath"
 
 	"github.com/docker/cli/cli/config"
+	"github.com/opencontainers/go-digest"
 )
 
 const (
@@ -12,6 +13,9 @@ const (
 
 	// SignatureStoreDirName is the name of the signature store directory
 	SignatureStoreDirName = "nv2"
+
+	// SignatureExtension defines the extension of the signature files
+	SignatureExtension = ".jwt"
 )
 
 var (
@@ -20,3 +24,12 @@ var (
 	// SignatureStoreDirPath is the path of the signature store
 	SignatureStoreDirPath = filepath.Join(config.Dir(), SignatureStoreDirName)
 )
+
+// SignaturePath returns the path of a signature for a manifest
+func SignaturePath(manifestDigest digest.Digest) string {
+	return filepath.Join(
+		SignatureStoreDirPath,
+		manifestDigest.Algorithm().String(),
+		manifestDigest.Encoded()+SignatureExtension,
+	)
+}
