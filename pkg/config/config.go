@@ -3,19 +3,6 @@ package config
 import (
 	"encoding/json"
 	"os"
-	"path/filepath"
-
-	"github.com/docker/cli/cli/config"
-)
-
-const (
-	// FileName is the name of config file
-	FileName = "nv2.json"
-)
-
-var (
-	// FilePath is the path of config file
-	FilePath = filepath.Join(config.Dir(), FileName)
 )
 
 // File reflects the config file
