@@ -95,7 +95,7 @@ func verifyRemoteImage(ctx context.Context, ref string) (string, error) {
 		}
 	}
 
-	return fmt.Sprintf("%s@%s", named, manifestDesc.Digest), nil
+	return fmt.Sprintf("%s@%s", named.Name(), manifestDesc.Digest), nil
 }
 
 func verifySignatures(
