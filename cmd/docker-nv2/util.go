@@ -20,7 +20,11 @@ func passThroughIfNotaryDisabled(ctx *cli.Context) error {
 	}
 
 	args := append([]string{ctx.Command.Name}, ctx.Args().Slice()...)
-	return runCommand("docker", args...)
+	if err := runCommand("docker", args...); err != nil {
+		return err
+	}
+	os.Exit(0)
+	panic("process should be terminated")
 }
 
 func runCommand(command string, args ...string) error {
@@ -34,8 +38,7 @@ func runCommand(command string, args ...string) error {
 		}
 		return err
 	}
-	os.Exit(0)
-	panic("process should be terminated")
+	return nil
 }
 
 func getVerificationService() (notary.SigningService, error) {
