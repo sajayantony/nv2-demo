@@ -25,12 +25,16 @@ func pullImage(ctx *cli.Context) error {
 		return err
 	}
 
-	ref, err := verifyRemoteImage(ctx.Context, ctx.Args().First())
+	originalRef := ctx.Args().First()
+	ref, err := verifyRemoteImage(ctx.Context, originalRef)
 	if err != nil {
 		return err
 	}
 
-	return runCommand("docker", "pull", ref)
+	if err := runCommand("docker", "pull", ref); err != nil {
+		return err
+	}
+	return runCommand("docker", "tag", ref, originalRef)
 }
 
 func verifyRemoteImage(ctx context.Context, ref string) (string, error) {
