@@ -66,11 +66,11 @@ func verifyRemoteImage(ctx context.Context, ref string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	sigDigests, err := client.Lookup(ctx, manifestDesc.Digest)
+	sigArtifactDigests, err := client.Lookup(ctx, manifestDesc.Digest)
 	if err != nil {
 		return "", err
 	}
-	switch n := len(sigDigests); n {
+	switch n := len(sigArtifactDigests); n {
 	case 0:
 		return "", errors.New("no signature found")
 	default:
@@ -81,7 +81,7 @@ func verifyRemoteImage(ctx context.Context, ref string) (string, error) {
 		ctx,
 		service,
 		client,
-		sigDigests,
+		sigArtifactDigests,
 		manifestDesc,
 	)
 	if err != nil {
@@ -107,7 +107,7 @@ func verifySignatures(
 ) (digest.Digest, []string, error) {
 	var lastError error
 	for _, digest := range digests {
-		sig, err := client.Get(ctx, digest)
+		sig, sigDigest, err := client.Get(ctx, digest)
 		if err != nil {
 			lastError = err
 			continue
@@ -118,7 +118,7 @@ func verifySignatures(
 			lastError = err
 			continue
 		}
-		return digest, references, nil
+		return sigDigest, references, nil
 	}
 	return "", nil, lastError
 }

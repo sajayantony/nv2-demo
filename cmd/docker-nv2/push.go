@@ -56,10 +56,11 @@ func pushImage(ctx *cli.Context) error {
 	}
 	fmt.Println("signature:", "digest:", sigDesc.Digest, "size:", sigDesc.Size)
 
-	if err := client.Link(ctx.Context, desc, sigDesc); err != nil {
+	artifactDesc, err := client.Link(ctx.Context, desc, sigDesc)
+	if err != nil {
 		return err
 	}
-	fmt.Println("Linked signature with manifest")
+	fmt.Println("Linked signature with manifest:", "digest:", artifactDesc.Digest, "size:", artifactDesc.Size)
 
 	return nil
 }
