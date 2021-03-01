@@ -60,7 +60,7 @@ func pushImage(ctx *cli.Context) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("Linked signature with manifest:", "digest:", artifactDesc.Digest, "size:", artifactDesc.Size)
+	fmt.Println("link:", "digest:", artifactDesc.Digest, "size:", artifactDesc.Size)
 
 	return nil
 }

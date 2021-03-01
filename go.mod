@@ -19,4 +19,4 @@ require (
 	gotest.tools/v3 v3.0.3 // indirect
 )
 
-replace github.com/notaryproject/notary/v2 => github.com/shizhMSFT/notary/v2 v2.0.0-20210202124147-4f478202d15a
+replace github.com/notaryproject/notary/v2 => github.com/shizhMSFT/notary/v2 v2.0.0-20210301055111-08e360f7af78

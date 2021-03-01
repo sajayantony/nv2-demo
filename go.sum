@@ -34,8 +34,8 @@ github.com/russross/blackfriday/v2 v2.0.1 h1:lPqVAte+HuHNfhJ/0LC98ESWRz8afy9tM/0
 github.com/russross/blackfriday/v2 v2.0.1/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
 github.com/shizhMSFT/docker-generate v0.1.0 h1:eCn+PzpFXeZjRO84PMLoZGbzYuhCce/jcD1HlzvtHeI=
 github.com/shizhMSFT/docker-generate v0.1.0/go.mod h1:lK5k1AUhsWZ8qBsz72H+kN4urdc7iDBK9jFAMEL0VhQ=
-github.com/shizhMSFT/notary/v2 v2.0.0-20210202124147-4f478202d15a h1:wvdRnymEuZgz8uRHM4LHX30MblZItLS3LnA9g6BtUBw=
-github.com/shizhMSFT/notary/v2 v2.0.0-20210202124147-4f478202d15a/go.mod h1:CN708S2wKRKpzzvAbfKY3NETWwnCNEFje3nWFUl5rU0=
+github.com/shizhMSFT/notary/v2 v2.0.0-20210301055111-08e360f7af78 h1:KXC6GH2LnEp1ksVRUKpVx7yns7cICth1GmYV/vfay+s=
+github.com/shizhMSFT/notary/v2 v2.0.0-20210301055111-08e360f7af78/go.mod h1:CN708S2wKRKpzzvAbfKY3NETWwnCNEFje3nWFUl5rU0=
 github.com/shurcooL/sanitized_anchor_name v1.0.0 h1:PdmoCO6wvbs+7yrJyMORt4/BmY5IYyJwS/kOiWx8mHo=
 github.com/shurcooL/sanitized_anchor_name v1.0.0/go.mod h1:1NzhyTcUVG4SuEtjjoZeVRXNmyL/1OwPU0+IJeTBvfc=
 github.com/sirupsen/logrus v1.7.0 h1:ShrD1U9pZB12TX0cVy0DtePoCH97K8EtX+mg7ZARUtM=
