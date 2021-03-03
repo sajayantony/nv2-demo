@@ -10,7 +10,7 @@ import (
 var pluginMetadata = map[string]interface{}{
 	"SchemaVersion":    "0.1.0",
 	"Vendor":           "Sajay Antony, Shiwei Zhang",
-	"Version":          "0.2.1",
+	"Version":          "0.2.2",
 	"ShortDescription": "Notary V2 Signature extension",
 	"URL":              "https://github.com/notaryproject/nv2",
 }

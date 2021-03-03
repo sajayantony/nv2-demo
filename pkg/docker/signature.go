@@ -7,6 +7,7 @@ import (
 	"github.com/docker/distribution/reference"
 	"github.com/notaryproject/notary/v2"
 	"github.com/notaryproject/notary/v2/registry"
+	"github.com/sajayantony/nv2-demo/pkg/config"
 )
 
 // GetSignatureRepository returns a signature repository
@@ -22,7 +23,7 @@ func GetSignatureRepository(ctx context.Context, ref string) (notary.SignatureRe
 		return nil, err
 	}
 
-	insecure := false
+	insecure := config.IsRegistryInsecure(hostname)
 	if host, _, _ := net.SplitHostPort(hostname); host == "localhost" {
 		insecure = true
 	}

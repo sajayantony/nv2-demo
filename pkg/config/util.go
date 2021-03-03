@@ -22,3 +22,17 @@ func CheckNotaryEnabled() error {
 	}
 	return ErrNotaryDisabled
 }
+
+// IsRegistryInsecure checks whether the registry is in the list of insecure registries.
+func IsRegistryInsecure(target string) bool {
+	config, err := Load()
+	if err != nil {
+		return false
+	}
+	for _, registry := range config.InsecureRegistries {
+		if registry == target {
+			return true
+		}
+	}
+	return false
+}

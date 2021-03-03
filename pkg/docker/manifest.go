@@ -12,6 +12,7 @@ import (
 	"github.com/docker/distribution/manifest/schema2"
 	"github.com/opencontainers/go-digest"
 	oci "github.com/opencontainers/image-spec/specs-go/v1"
+	"github.com/sajayantony/nv2-demo/pkg/config"
 	"github.com/shizhMSFT/docker-generate/pkg/manifest"
 )
 
@@ -55,6 +56,9 @@ func GetManifestOCIDescriptor(ctx context.Context, hostname, repository, ref str
 	}
 
 	scheme := "https"
+	if config.IsRegistryInsecure(hostname) {
+		scheme = "http"
+	}
 	if host, _, _ := net.SplitHostPort(hostname); host == "localhost" {
 		scheme = "http"
 	}
