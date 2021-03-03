@@ -116,7 +116,7 @@ func GetManifestOCIDescriptor(ctx context.Context, hostname, repository, ref str
 func GetManifestReference(ref string) string {
 	if index := strings.Index(ref, "@"); index != -1 {
 		return ref[index+1:]
-	} else if index := strings.Index(ref, ":"); index != -1 {
+	} else if index := strings.LastIndex(ref, ":"); index != -1 {
 		return ref[index+1:]
 	} else {
 		return "latest"
