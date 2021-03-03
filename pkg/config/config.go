@@ -7,8 +7,9 @@ import (
 
 // File reflects the config file
 type File struct {
-	Enabled           bool     `json:"enabled"`
-	VerificationCerts []string `json:"verificationCerts"`
+	Enabled            bool     `json:"enabled"`
+	VerificationCerts  []string `json:"verificationCerts"`
+	InsecureRegistries []string `json:"insecureRegistries"`
 }
 
 // New creates a new config file
